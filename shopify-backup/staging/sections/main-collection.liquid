@@ -1,0 +1,128 @@
+{% stylesheet %}
+  .collection-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  .collection-page__header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .collection-page__label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .collection-page__title {
+    font-family: var(--font-serif);
+    font-size: clamp(32px, 5vw, 56px);
+    color: var(--color-white);
+    font-weight: 400;
+    margin-bottom: 18px;
+  }
+
+  .collection-page__description {
+    max-width: 620px;
+    margin: 0 auto;
+    color: var(--color-text);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  .collection-page__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+  }
+
+  .collection-page__empty {
+    text-align: center;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    padding: 80px 0;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 70px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  .pagination a,
+  .pagination span {
+    padding: 10px 16px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .pagination a:hover { border-color: var(--color-gold); color: var(--color-gold); opacity: 1; }
+  .pagination span.current { border-color: var(--color-gold); color: var(--color-gold); }
+
+  @media (max-width: 768px) {
+    .collection-page { padding: 36px 20px 70px; }
+    .collection-page__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{%- paginate collection.products by 12 -%}
+  <div class="collection-page">
+    <header class="collection-page__header">
+      <div class="collection-page__label">{{ shop.name }} · Collection</div>
+      <h1 class="collection-page__title">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <div class="collection-page__description">{{ collection.description }}</div>
+      {%- endif -%}
+    </header>
+
+    {%- if collection.products.size > 0 -%}
+      <div class="collection-page__grid">
+        {%- for product in collection.products -%}
+          {% render 'product-card', card_product: product %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <p class="collection-page__empty">{{ 'collections.general.no_matches' | t }}</p>
+    {%- endif -%}
+
+    {%- if paginate.pages > 1 -%}
+      <nav class="pagination" role="navigation">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}">&larr; {{ 'general.pagination.previous' | t }}</a>
+        {%- endif -%}
+        {%- for part in paginate.parts -%}
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}">{{ part.title }}</a>
+          {%- elsif part.title == paginate.current_page -%}
+            <span class="current">{{ part.title }}</span>
+          {%- else -%}
+            <span>{{ part.title }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}">{{ 'general.pagination.next' | t }} &rarr;</a>
+        {%- endif -%}
+      </nav>
+    {%- endif -%}
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": []
+}
+{% endschema %}

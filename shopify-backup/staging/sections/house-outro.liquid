@@ -1,0 +1,44 @@
+{% stylesheet %}
+  .yh-outro { background: var(--color-dark-bg); text-align: center; }
+  .yh-outro__img { display: block; width: 100%; height: 56vh; object-fit: cover; border-bottom: 1px solid rgba(196,164,106,.5); }
+  .yh-outro__body { padding: 110px 24px; }
+  .yh-outro__body--rule { border-top: 1px solid rgba(196,164,106,.5); }
+  .yh-outro__mark { display: block; width: 18px; height: 18px; margin: 0 auto 34px; color: var(--color-ink); }
+  .yh-outro__label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .42em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 18px; }
+  .yh-outro__title { font-family: var(--font-serif); font-weight: 300; font-size: clamp(40px, 6vw, 64px); line-height: 1.05; color: var(--color-ink); margin: 0 0 24px; letter-spacing: 0; }
+  .yh-outro__text { font-family: var(--font-mono); font-size: 14px; line-height: 1.8; color: var(--color-muted); max-width: 440px; margin: 0 auto 40px; }
+  .yh-outro__btn {
+    display: inline-block; border: 1px solid var(--color-gold); color: var(--color-gold); padding: 16px 30px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .38em; text-transform: uppercase; transition: .35s;
+  }
+  .yh-outro__btn:hover { background: var(--color-gold); color: #0a0a0a; opacity: 1; }
+{% endstylesheet %}
+
+<section class="yh-outro">
+  {%- if section.settings.image != blank -%}
+    <img class="yh-outro__img" src="{{ section.settings.image | image_url: width: 1600 }}" alt="{{ section.settings.image.alt | escape }}" width="{{ section.settings.image.width }}" height="{{ section.settings.image.height }}" loading="lazy">
+  {%- endif -%}
+  <div class="yh-outro__body{% if section.settings.image == blank %} yh-outro__body--rule{% endif %}">
+    <svg class="yh-outro__mark" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M3 4l7 8 7-8M10 12v5"/></svg>
+    <div class="yh-outro__label">{{ section.settings.label }}</div>
+    <h2 class="yh-outro__title">{{ section.settings.title_1 }}<br>{{ section.settings.title_2 }}</h2>
+    <p class="yh-outro__text">{{ section.settings.text }}</p>
+    <a class="yh-outro__btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_text }}</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "House outro",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Detail photo (optional)" },
+    { "type": "text", "id": "label", "label": "Small label", "default": "The House of YAHIVO" },
+    { "type": "text", "id": "title_1", "label": "Title line 1", "default": "Streetwear" },
+    { "type": "text", "id": "title_2", "label": "Title line 2", "default": "for the few." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Every YAHIVO piece is cut heavy and finished clean. Chosen for the street, delivered across the UAE." },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Shop the collection" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [ { "name": "House outro" } ]
+}
+{% endschema %}

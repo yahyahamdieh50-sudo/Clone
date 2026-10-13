@@ -1,0 +1,84 @@
+{% stylesheet %}
+  .yh-ftr { background: var(--color-dark-bg); border-top: 1px solid rgba(236,230,218,.14); }
+  .yh-ftr__in { max-width: 1320px; margin: 0 auto; padding: 70px clamp(16px, 4vw, 40px) 40px; }
+  .yh-ftr__mark { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .42em; text-transform: uppercase; color: var(--color-ink); margin-bottom: 42px; }
+  .yh-ftr__mark svg { width: 14px; height: 14px; }
+  .yh-ftr__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-bottom: 46px; }
+  .yh-ftr__cols h4 { font-family: var(--font-mono); font-weight: 400; font-size: 9px; letter-spacing: .38em; text-transform: uppercase; color: var(--color-gold); margin: 0 0 18px; }
+  .yh-ftr__cols ul { list-style: none; margin: 0; padding: 0; }
+  .yh-ftr__cols li { margin-bottom: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); }
+  .yh-ftr__cols a { color: var(--color-muted); }
+  .yh-ftr__cols a:hover { color: var(--color-ink); opacity: 1; }
+  .yh-ftr__fine { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; color: #5f5a52; margin: 0; }
+  @media (max-width: 600px) { .yh-ftr__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+{% endstylesheet %}
+
+<footer class="yh-ftr">
+  <div class="yh-ftr__in">
+    <div class="yh-ftr__mark">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M3 4l7 8 7-8M10 12v5"/></svg>
+      {{ shop.name }}
+    </div>
+
+    <div class="yh-ftr__cols">
+      <div>
+        <h4>{{ section.settings.col1_title }}</h4>
+        <ul>
+          {%- assign m1 = linklists[section.settings.col1_menu] -%}
+          {%- if m1 != blank and m1.links.size > 0 -%}
+            {%- for link in m1.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
+          {%- else -%}
+            <li><a href="{{ routes.all_products_collection_url }}">All products</a></li>
+            {%- for collection in collections limit: 6 -%}
+              {%- unless collection.handle == 'frontpage' or collection.handle contains 'example' -%}
+                <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <div>
+        <h4>{{ section.settings.col2_title }}</h4>
+        <ul>
+          {%- assign m2 = linklists[section.settings.col2_menu] -%}
+          {%- if m2 != blank and m2.links.size > 0 -%}
+            {%- for link in m2.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
+          {%- else -%}
+            {%- for policy in shop.policies -%}
+              {%- if policy != blank -%}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <div>
+        <h4>{{ section.settings.col3_title }}</h4>
+        <ul>
+          {%- if section.settings.col3_text != blank -%}
+            {%- assign lines = section.settings.col3_text | newline_to_br | split: '<br />' -%}
+            {%- for line in lines -%}<li>{{ line | strip }}</li>{%- endfor -%}
+          {%- endif -%}
+          <li><a href="{{ routes.account_url }}">My account</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="yh-ftr__fine">&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} — {{ section.settings.fine_print }}</p>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "text", "id": "col1_title", "label": "Column 1 title", "default": "Shop" },
+    { "type": "link_list", "id": "col1_menu", "label": "Column 1 menu" },
+    { "type": "text", "id": "col2_title", "label": "Column 2 title", "default": "Care" },
+    { "type": "link_list", "id": "col2_menu", "label": "Column 2 menu", "default": "footer" },
+    { "type": "text", "id": "col3_title", "label": "Column 3 title", "default": "Visit" },
+    { "type": "textarea", "id": "col3_text", "label": "Column 3 lines", "default": "yahivo.com\nDelivered across the UAE" },
+    { "type": "text", "id": "fine_print", "label": "Fine print", "default": "Made heavy, worn daily." }
+  ]
+}
+{% endschema %}

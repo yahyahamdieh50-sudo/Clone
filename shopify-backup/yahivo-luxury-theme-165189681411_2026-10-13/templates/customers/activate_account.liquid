@@ -1,0 +1,16 @@
+<div class="account-page">
+  <h1 class="account-page__title">Activate account</h1>
+
+  {%- form 'activate_customer_password', class: 'account-form' -%}
+    {{ form.errors | default_errors }}
+
+    <label for="ActivatePassword">Password</label>
+    <input type="password" name="customer[password]" id="ActivatePassword" required>
+
+    <label for="ActivatePasswordConfirm">Confirm password</label>
+    <input type="password" name="customer[password_confirmation]" id="ActivatePasswordConfirm" required>
+
+    <button type="submit" class="account-form__submit">Activate account</button>
+    <button type="submit" name="decline" class="account-form__decline">Decline invitation</button>
+  {%- endform -%}
+</div>

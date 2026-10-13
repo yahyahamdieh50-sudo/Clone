@@ -1,0 +1,139 @@
+{% stylesheet %}
+  .featured-collection {
+    background: var(--color-dark-bg);
+    padding: 90px 40px;
+  }
+
+  .featured-collection__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .featured-collection__header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .featured-collection__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .42em;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .featured-collection__title {
+    font-family: var(--font-serif);
+    font-size: clamp(30px, 4vw, 48px);
+    color: var(--color-ink);
+    font-weight: 300;
+    margin: 0;
+  }
+
+  .featured-collection__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2px;
+  }
+
+  .featured-collection__footer {
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .featured-collection__viewall {
+    display: inline-block;
+    padding: 16px 44px;
+    border: 2px solid var(--color-gold);
+    color: var(--color-gold);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+
+  .featured-collection__viewall:hover {
+    background: var(--color-gold);
+    color: var(--color-black);
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .featured-collection { padding: 60px 20px; }
+    .featured-collection__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{%- liquid
+  assign fc = collections[section.settings.collection]
+  if fc == blank or fc.products.size == 0
+    assign fc = collections.all
+  endif
+-%}
+
+<section class="featured-collection">
+  <div class="featured-collection__inner">
+    <div class="featured-collection__header">
+      <div class="featured-collection__label">{{ section.settings.label }}</div>
+      <h2 class="featured-collection__title">
+        {{ section.settings.title | default: fc.title }}
+      </h2>
+    </div>
+
+    <div class="featured-collection__grid">
+      {%- for product in fc.products limit: section.settings.products_to_show -%}
+        {% render 'product-card', card_product: product %}
+      {%- endfor -%}
+    </div>
+
+    <div class="featured-collection__footer">
+      <a href="{{ fc.url }}" class="featured-collection__viewall">
+        {{ 'collections.general.view_all' | t }} &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Small gold label",
+      "default": "The Collection"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading (optional, defaults to collection name)"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 4,
+      "max": 12,
+      "step": 4,
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,35 @@
+<div class="account-page">
+  <h1 class="account-page__title">{{ 'customer.login.title' | t }}</h1>
+
+  {%- form 'customer_login', class: 'account-form' -%}
+    {{ form.errors | default_errors }}
+    <label for="CustomerEmail">{{ 'customer.login.email' | t }}</label>
+    <input type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" required>
+
+    <label for="CustomerPassword">{{ 'customer.login.password' | t }}</label>
+    <input type="password" name="customer[password]" id="CustomerPassword" autocomplete="current-password" required>
+
+    <button type="submit" class="account-form__submit">{{ 'customer.login.sign_in' | t }}</button>
+
+    <p class="account-form__links">
+      <a href="#recover" onclick="document.getElementById('RecoverForm').style.display='block'; this.closest('p').style.display='none'; return false;">
+        {{ 'customer.login.forgot_password' | t }}
+      </a>
+      &nbsp;·&nbsp;
+      <a href="{{ routes.account_register_url }}">{{ 'customer.login.create_account' | t }}</a>
+    </p>
+  {%- endform -%}
+
+  <div id="RecoverForm" style="display: none;">
+    <h2 class="account-page__subtitle">{{ 'customer.recover_password.title' | t }}</h2>
+    {%- form 'recover_customer_password', class: 'account-form' -%}
+      {{ form.errors | default_errors }}
+      {%- if form.posted_successfully? -%}
+        <p>We've sent you an email with a link to update your password.</p>
+      {%- endif -%}
+      <label for="RecoverEmail">{{ 'customer.login.email' | t }}</label>
+      <input type="email" name="email" id="RecoverEmail" autocomplete="email" required>
+      <button type="submit" class="account-form__submit">{{ 'customer.recover_password.submit' | t }}</button>
+    {%- endform -%}
+  </div>
+</div>

@@ -1,0 +1,263 @@
+{% stylesheet %}
+  .luxury-showcase {
+    background: var(--color-dark-bg);
+    color: var(--color-white);
+    overflow: hidden;
+  }
+
+  .showcase-section {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    position: relative;
+    padding: 80px 40px;
+    border-bottom: 1px solid var(--color-border);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .showcase-section--reverse { flex-direction: row-reverse; }
+
+  .showcase-section__image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .showcase-section__image img {
+    max-width: 100%;
+    max-height: 70vh;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.15));
+    animation: showcase-float 6s ease-in-out infinite;
+  }
+
+  @keyframes showcase-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-16px); }
+  }
+
+  .showcase-section__content {
+    flex: 1;
+    max-width: 560px;
+  }
+
+  .showcase-section__number {
+    font-family: var(--font-serif);
+    font-size: 72px;
+    color: var(--color-gold);
+    line-height: 1;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  .showcase-section__label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .showcase-section__title {
+    font-family: var(--font-serif);
+    font-size: clamp(32px, 5vw, 54px);
+    line-height: 1.15;
+    margin-bottom: 20px;
+    font-weight: 400;
+    color: var(--color-white);
+  }
+
+  .showcase-section__price {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    color: var(--color-gold);
+    letter-spacing: 1px;
+    margin-bottom: 26px;
+  }
+
+  .showcase-section__price s {
+    color: #777;
+    margin-right: 12px;
+    font-size: 16px;
+  }
+
+  .showcase-section__description {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--color-text);
+    margin-bottom: 36px;
+  }
+
+  .showcase-section__cta {
+    display: inline-block;
+    padding: 16px 44px;
+    border: 2px solid var(--color-gold);
+    color: var(--color-gold);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+
+  .showcase-section__cta:hover {
+    background: var(--color-gold);
+    color: var(--color-black);
+    opacity: 1;
+  }
+
+  .showcase-section__soldout {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+    border: 1px solid #555;
+    padding: 6px 14px;
+    margin-left: 14px;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 860px) {
+    .showcase-section,
+    .showcase-section--reverse {
+      flex-direction: column;
+      min-height: 0;
+      padding: 60px 20px;
+    }
+    .showcase-section__content { max-width: 100%; }
+    .showcase-section__number { font-size: 54px; }
+  }
+{% endstylesheet %}
+
+<div class="luxury-showcase" id="products">
+  {%- liquid
+    assign fallback_collection = collections[section.settings.fallback_collection]
+    if fallback_collection == blank or fallback_collection.products.size == 0
+      assign fallback_collection = collections.all
+    endif
+  -%}
+
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign showcase_product = block.settings.product
+      if showcase_product == blank
+        assign fallback_index = forloop.index0
+        assign showcase_product = fallback_collection.products[fallback_index]
+      endif
+    -%}
+
+    {%- if showcase_product != blank -%}
+      <section class="showcase-section {% cycle '', 'showcase-section--reverse' %}" {{ block.shopify_attributes }}>
+        <div class="showcase-section__image">
+          {%- if showcase_product.featured_image -%}
+            <img
+              src="{{ showcase_product.featured_image | image_url: width: 800 }}"
+              srcset="{{ showcase_product.featured_image | image_url: width: 500 }} 500w, {{ showcase_product.featured_image | image_url: width: 800 }} 800w, {{ showcase_product.featured_image | image_url: width: 1200 }} 1200w"
+              sizes="(max-width: 860px) 90vw, 45vw"
+              alt="{{ showcase_product.featured_image.alt | default: showcase_product.title | escape }}"
+              loading="lazy"
+              width="{{ showcase_product.featured_image.width }}"
+              height="{{ showcase_product.featured_image.height }}"
+            >
+          {%- endif -%}
+        </div>
+
+        <div class="showcase-section__content">
+          <div class="showcase-section__number">{{ forloop.index | prepend: '00' | slice: -2, 2 }}</div>
+          <div class="showcase-section__label">
+            {{ block.settings.label | default: showcase_product.type | default: 'Signature Piece' }}
+          </div>
+          <h2 class="showcase-section__title">{{ showcase_product.title }}</h2>
+          <p class="showcase-section__price">
+            {%- if showcase_product.compare_at_price > showcase_product.price -%}
+              <s>{{ showcase_product.compare_at_price | money }}</s>
+            {%- endif -%}
+            {{ showcase_product.price | money }}
+          </p>
+          <div class="showcase-section__description">
+            {%- if block.settings.description != blank -%}
+              {{ block.settings.description }}
+            {%- else -%}
+              {{ showcase_product.description | strip_html | truncate: 220 }}
+            {%- endif -%}
+          </div>
+          <a href="{{ showcase_product.url }}" class="showcase-section__cta">
+            {%- if showcase_product.available -%}
+              {{ block.settings.cta_text | default: 'Discover' }}
+            {%- else -%}
+              {{ 'products.product.view_details' | t }}
+            {%- endif -%}
+          </a>
+          {%- unless showcase_product.available -%}
+            <span class="showcase-section__soldout">{{ 'products.product.sold_out' | t }}</span>
+          {%- endunless -%}
+        </div>
+      </section>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "Luxury Showcase",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "fallback_collection",
+      "label": "Fallback collection",
+      "info": "Used to auto-fill any showcase slot with no product selected."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "showcase_product",
+      "name": "Showcase product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Small gold label",
+          "default": "Signature Piece"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Custom description (optional)",
+          "info": "Leave empty to use the product's own description."
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "Button text",
+          "default": "Discover"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury Showcase",
+      "blocks": [
+        { "type": "showcase_product" },
+        { "type": "showcase_product" },
+        { "type": "showcase_product" }
+      ]
+    }
+  ]
+}
+{% endschema %}

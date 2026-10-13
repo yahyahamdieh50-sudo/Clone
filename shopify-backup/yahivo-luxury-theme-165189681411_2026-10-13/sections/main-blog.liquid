@@ -1,0 +1,73 @@
+{% stylesheet %}
+  .blog-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  .blog-page__title {
+    font-family: var(--font-serif);
+    font-size: clamp(32px, 5vw, 48px);
+    color: var(--color-white);
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .blog-card {
+    display: block;
+    padding: 30px 0;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+  }
+
+  .blog-card__date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .blog-card__title {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    color: var(--color-white);
+    margin-bottom: 10px;
+  }
+
+  .blog-card:hover .blog-card__title { color: var(--color-gold); }
+  .blog-card__excerpt { color: var(--color-text); line-height: 1.7; font-size: 15px; }
+
+  @media (max-width: 768px) {
+    .blog-page { padding: 36px 20px 70px; }
+  }
+{% endstylesheet %}
+
+{%- paginate blog.articles by 8 -%}
+  <div class="blog-page">
+    <h1 class="blog-page__title">{{ blog.title }}</h1>
+    {%- for article in blog.articles -%}
+      <a href="{{ article.url }}" class="blog-card">
+        <div class="blog-card__date">{{ article.published_at | date: "%B %d, %Y" }}</div>
+        <h2 class="blog-card__title">{{ article.title }}</h2>
+        <p class="blog-card__excerpt">{{ article.excerpt_or_content | strip_html | truncate: 180 }}</p>
+      </a>
+    {%- endfor -%}
+
+    {%- if paginate.pages > 1 -%}
+      <nav class="pagination" role="navigation">
+        {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&larr; {{ 'general.pagination.previous' | t }}</a>{%- endif -%}
+        {%- if paginate.next -%}<a href="{{ paginate.next.url }}">{{ 'general.pagination.next' | t }} &rarr;</a>{%- endif -%}
+      </nav>
+    {%- endif -%}
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": []
+}
+{% endschema %}

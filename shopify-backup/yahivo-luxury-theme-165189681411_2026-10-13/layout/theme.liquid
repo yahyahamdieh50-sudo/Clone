@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_dark_bg }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <title>
+      {{ page_title }}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {{ content_for_header }}
+
+    {{ 'luxury-global-styles.css' | asset_url | stylesheet_tag }}
+
+    <style>
+      :root {
+        --color-dark-bg: {{ settings.color_dark_bg | default: '#0a0a0a' }};
+        --color-black: {{ settings.color_black | default: '#131210' }};
+        --color-gold: {{ settings.color_gold | default: '#c4a46a' }};
+        --color-text: {{ settings.color_text | default: '#b9b2a6' }};
+        --color-ink: #ece6da;
+        --color-muted: #8d877c;
+        --color-white: #ece6da;
+        --color-border: rgba(236, 230, 218, 0.14);
+        --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+        --font-mono: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+        --font-sans: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+        color-scheme: dark;
+      }
+
+      body { font-weight: 300; -webkit-font-smoothing: antialiased; }
+      h1, h2, h3 { font-weight: 300; }
+
+      .visually-hidden {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        border: 0;
+      }
+
+      .skip-to-content-link:focus {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 12px 20px;
+        clip: auto;
+        background: var(--color-gold);
+        color: var(--color-black);
+        font-family: var(--font-mono);
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <a class="skip-to-content-link visually-hidden" href="#MainContent">
+      {{ 'accessibility.skip_to_text' | t }}
+    </a>
+
+    {% section 'header' %}
+
+    <main id="MainContent" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+  </body>
+</html>

@@ -1,0 +1,45 @@
+{%- comment -%}
+  Renders a luxury product card.
+  Usage: {% render 'product-card', card_product: product %}
+{%- endcomment -%}
+
+<a href="{{ card_product.url }}" class="product-card">
+  <div class="product-card__media">
+    {%- if card_product.featured_image -%}
+      <img
+        src="{{ card_product.featured_image | image_url: width: 600 }}"
+        srcset="{{ card_product.featured_image | image_url: width: 400 }} 400w, {{ card_product.featured_image | image_url: width: 600 }} 600w, {{ card_product.featured_image | image_url: width: 900 }} 900w"
+        sizes="(max-width: 768px) 50vw, 25vw"
+        alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
+        loading="lazy"
+        width="{{ card_product.featured_image.width }}"
+        height="{{ card_product.featured_image.height }}"
+      >
+      {%- if card_product.images[1] -%}
+        <img
+          class="product-card__media-hover"
+          src="{{ card_product.images[1] | image_url: width: 600 }}"
+          alt=""
+          loading="lazy"
+          aria-hidden="true"
+        >
+      {%- endif -%}
+    {%- else -%}
+      <div class="product-card__placeholder">{{ card_product.title | slice: 0, 1 }}</div>
+    {%- endif -%}
+
+    {%- unless card_product.available -%}
+      <span class="product-card__badge">{{ 'products.product.sold_out' | t }}</span>
+    {%- endunless -%}
+  </div>
+
+  <div class="product-card__info">
+    <h3 class="product-card__title">{{ card_product.title }}</h3>
+    <p class="product-card__price">
+      {%- if card_product.compare_at_price > card_product.price -%}
+        <s class="product-card__compare">{{ card_product.compare_at_price | money }}</s>
+      {%- endif -%}
+      {%- if card_product.price_varies -%}From {% endif -%}{{ card_product.price | money }}
+    </p>
+  </div>
+</a>
