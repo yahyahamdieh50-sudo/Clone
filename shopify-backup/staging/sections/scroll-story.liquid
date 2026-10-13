@@ -1,0 +1,379 @@
+{%- comment -%}
+  Cinematic scroll story: a particle-silhouette hero followed by full-screen
+  product "chapters" that crossfade as the visitor scrolls.
+{%- endcomment -%}
+
+{% stylesheet %}
+  .yh-story { position: relative; height: calc(var(--yh-n, 4) * 100vh); background: var(--color-dark-bg); }
+  .yh-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  .yh-scene { position: absolute; inset: 0; opacity: 0; visibility: hidden; will-change: opacity; }
+  .yh-scene:not(.is-on) { pointer-events: none; }
+  .yh-scene:first-child { opacity: 1; visibility: visible; }
+
+  .yh-backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 55% at 50% 28%, rgba(236,226,206,.13), transparent 70%),
+      linear-gradient(180deg, #0d0c0b 0%, #151311 58%, #070707 59%, #0b0b0a 100%);
+  }
+  .yh-floor {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 41%;
+    background:
+      radial-gradient(ellipse 55% 30% at 50% 0%, rgba(236,226,206,.10), transparent 70%),
+      repeating-linear-gradient(180deg, rgba(255,255,255,.012) 0 1px, transparent 1px 7px);
+  }
+  .yh-media { position: absolute; inset: 0; transform: scale(calc(1 - var(--t, 0) * .06)); will-change: transform; }
+
+  /* Full-bleed scene photo (uploaded in the editor) */
+  .yh-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  /* Product photo floating on the stage */
+  .yh-piece {
+    position: absolute; left: 50%; top: 10vh; transform: translateX(-50%);
+    height: min(46vh, 100vw); width: min(46vh, 100vw); max-width: none;
+  }
+  .yh-piece img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  /* Framed mode (default): product photos that have a background */
+  .yh-scene:not(.is-cutout) .yh-piece {
+    width: min(68vw, 34vh); height: min(85vw, 42.5vh); top: 11vh;
+    box-shadow: 0 40px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(196,164,106,.35);
+  }
+  .yh-scene:not(.is-cutout) .yh-piece img { object-fit: cover; filter: brightness(.9) contrast(1.04); }
+  .yh-scene:not(.is-cutout) .yh-piece::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(10,10,10,0) 55%, rgba(10,10,10,.35) 100%), radial-gradient(ellipse at 50% 30%, transparent 55%, rgba(10,10,10,.28) 100%);
+  }
+  .yh-scene:not(.is-cutout) .yh-reflect { top: calc(11vh + min(85vw, 42.5vh) + 6px); opacity: .07; box-shadow: none; }
+  .yh-scene:not(.is-cutout) .yh-reflect::after { display: none; }
+
+  /* Cutout mode: transparent PNGs float on the stage like the reference */
+  .yh-scene.is-cutout .yh-piece img { filter: drop-shadow(0 30px 50px rgba(0,0,0,.6)); }
+  .yh-float { animation: yh-float 7s ease-in-out infinite; }
+  @keyframes yh-float { 50% { translate: 0 -12px; } }
+  .yh-reflect {
+    top: calc(10vh + min(46vh, 100vw) + 6px); transform: translateX(-50%) scaleY(-1);
+    opacity: .16; filter: blur(1.5px);
+    -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 38%);
+    mask-image: linear-gradient(to top, #000 0%, transparent 38%);
+  }
+  .yh-reflect img { filter: none !important; }
+
+  .yh-shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(10,10,10,.55) 62%, rgba(10,10,10,.88) 100%); }
+  .yh-shade--photo { background: linear-gradient(180deg, rgba(10,10,10,.25) 0%, transparent 30%, rgba(10,10,10,.6) 60%, rgba(10,10,10,.9) 100%); }
+
+  .yh-txt {
+    position: absolute; left: 0; right: 0; bottom: calc(11vh + env(safe-area-inset-bottom, 0px));
+    text-align: center; padding: 0 24px; transform: translateY(calc(var(--t, 0) * -50px));
+  }
+  .yh-no { font-family: var(--font-serif); font-style: italic; font-size: 13px; color: var(--color-gold); margin-bottom: 8px; }
+  .yh-lb { font-family: var(--font-mono); font-size: 10px; letter-spacing: .42em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 16px; }
+  .yh-tt {
+    font-family: var(--font-serif); font-weight: 300; font-size: clamp(36px, 6.4vw, 68px); line-height: 1.02;
+    color: var(--color-ink); text-wrap: balance; margin: 0 0 18px; letter-spacing: 0;
+  }
+  .yh-ds { font-family: var(--font-mono); font-size: 13px; line-height: 1.75; color: var(--color-muted); max-width: 430px; margin: 0 auto 22px; }
+  .yh-sp { font-family: var(--font-mono); font-size: 10px; letter-spacing: .34em; text-transform: uppercase; color: var(--color-muted); margin: 0; }
+  .yh-sp em { font-style: normal; color: var(--color-gold); margin-right: .6em; }
+  .yh-view {
+    display: inline-block; margin-top: 20px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .34em;
+    text-transform: uppercase; color: var(--color-ink); padding-bottom: 5px; border-bottom: 1px solid rgba(236,230,218,.4);
+  }
+  .yh-view:hover { color: var(--color-gold); border-color: var(--color-gold); opacity: 1; }
+
+  .yh-hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .yh-hero .yh-txt { bottom: auto; top: 36%; }
+  .yh-eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: .42em; text-transform: uppercase; color: var(--color-ink); opacity: .8; margin-bottom: 22px; }
+  .yh-htitle { font-family: var(--font-serif); font-weight: 300; font-size: clamp(46px, 8.6vw, 104px); line-height: .98; color: var(--color-ink); margin: 0; letter-spacing: 0; }
+  .yh-htitle em { display: block; color: var(--color-gold); font-style: italic; }
+  .yh-hint { margin-top: 40px; font-family: var(--font-mono); font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: var(--color-muted); animation: yh-pulse 2.4s infinite; }
+  @keyframes yh-pulse { 50% { opacity: .35; } }
+
+  .yh-rail { position: fixed; right: clamp(10px, 2vw, 22px); top: 50%; transform: translateY(-50%); width: 1px; height: 28vh; background: rgba(236,230,218,.14); z-index: 30; transition: opacity .4s; }
+  .yh-rail i { position: absolute; left: 0; top: 0; width: 1px; height: 100%; background: var(--color-ink); transform-origin: top; transform: scaleY(0); }
+  .yh-bar { position: fixed; left: 0; right: 0; bottom: 0; height: 2px; z-index: 30; pointer-events: none; transition: opacity .4s; }
+  .yh-bar i { display: block; height: 100%; background: linear-gradient(90deg, #8a6d3b, var(--color-gold)); transform-origin: left; transform: scaleX(0); }
+  .yh-story.is-past .yh-rail, .yh-story.is-past .yh-bar { opacity: 0; }
+
+  @media (prefers-reduced-motion: reduce) { .yh-float, .yh-hint { animation: none; } }
+{% endstylesheet %}
+
+{%- assign chapter_count = section.blocks.size | plus: 1 -%}
+
+<section class="yh-story" style="--yh-n: {{ chapter_count }};" data-yh-story>
+  <div class="yh-stage">
+    {%- comment -%} Hero: particle silhouette {%- endcomment -%}
+    <div class="yh-scene yh-hero">
+      <div class="yh-backdrop"></div>
+      <div class="yh-floor"></div>
+      <canvas data-yh-particles></canvas>
+      <div class="yh-shade" style="background: radial-gradient(ellipse at 50% 45%, transparent 30%, rgba(10,10,10,.55) 100%);"></div>
+      <div class="yh-txt">
+        <div class="yh-eyebrow">{{ section.settings.eyebrow }}</div>
+        <h1 class="yh-htitle">{{ section.settings.title_1 }}<em>{{ section.settings.title_2 }}</em></h1>
+        <div class="yh-hint">{{ section.settings.hint }}</div>
+      </div>
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign p = block.settings.product -%}
+      <div class="yh-scene" {{ block.shopify_attributes }}>
+        <div class="yh-backdrop"></div>
+        <div class="yh-floor"></div>
+        <div class="yh-media">
+          {%- if block.settings.scene_image != blank -%}
+            <img
+              class="yh-photo"
+              src="{{ block.settings.scene_image | image_url: width: 1600 }}"
+              srcset="{{ block.settings.scene_image | image_url: width: 750 }} 750w, {{ block.settings.scene_image | image_url: width: 1200 }} 1200w, {{ block.settings.scene_image | image_url: width: 1800 }} 1800w"
+              sizes="100vw"
+              alt="{{ block.settings.scene_image.alt | default: p.title | escape }}"
+              width="{{ block.settings.scene_image.width }}"
+              height="{{ block.settings.scene_image.height }}"
+              {% unless forloop.first %}loading="lazy"{% endunless %}
+            >
+          {%- elsif p != blank and p.featured_image -%}
+            {%- capture piece_img -%}
+              <img
+                src="{{ p.featured_image | image_url: width: 900 }}"
+                srcset="{{ p.featured_image | image_url: width: 500 }} 500w, {{ p.featured_image | image_url: width: 900 }} 900w"
+                sizes="50vh"
+                alt="{{ p.featured_image.alt | default: p.title | escape }}"
+                width="{{ p.featured_image.width }}"
+                height="{{ p.featured_image.height }}"
+                {% unless forloop.first %}loading="lazy"{% endunless %}
+              >
+            {%- endcapture -%}
+            <div class="yh-piece yh-float" data-yh-piece>{{ piece_img }}</div>
+            <div class="yh-piece yh-reflect" aria-hidden="true">{{ piece_img }}</div>
+          {%- endif -%}
+        </div>
+        <div class="yh-shade{% if block.settings.scene_image != blank %} yh-shade--photo{% endif %}"></div>
+
+        <div class="yh-txt">
+          <div class="yh-no">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</div>
+          <div class="yh-lb">{{ block.settings.label }}</div>
+          <h2 class="yh-tt">
+            {%- if block.settings.title_1 != blank -%}
+              {{ block.settings.title_1 }}{% if block.settings.title_2 != blank %}<br>{{ block.settings.title_2 }}{% endif %}
+            {%- else -%}
+              {{ p.title }}
+            {%- endif -%}
+          </h2>
+          {%- if block.settings.text != blank -%}
+            <p class="yh-ds">{{ block.settings.text }}</p>
+          {%- elsif p != blank -%}
+            <p class="yh-ds">{{ p.description | strip_html | truncatewords: 22 }}</p>
+          {%- endif -%}
+          {%- if p != blank -%}
+            <p class="yh-sp">
+              <em>{{ p.price | money }}</em>
+              {%- if block.settings.spec != blank -%}
+                {{ block.settings.spec }}
+              {%- elsif p.available -%}
+                {{ p.variants.size }} {% if p.variants.size == 1 %}option{% else %}options{% endif %}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </p>
+            <a class="yh-view" href="{{ p.url }}">{{ block.settings.link_text }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <div class="yh-rail"><i data-yh-rail></i></div>
+  <div class="yh-bar"><i data-yh-bar></i></div>
+</section>
+
+{% javascript %}
+(function () {
+  function initStory(story) {
+    var stage = story.querySelector('.yh-stage');
+    var scenes = Array.prototype.slice.call(stage.children);
+    var rail = story.querySelector('[data-yh-rail]');
+    var bar = story.querySelector('[data-yh-bar]');
+    var state = { f: 0 };
+
+    function onScroll() {
+      var r = story.getBoundingClientRect();
+      var total = Math.max(1, story.offsetHeight - window.innerHeight);
+      var p = Math.min(1, Math.max(0, -r.top / total));
+      var f = p * (scenes.length - 1);
+      state.f = f;
+      scenes.forEach(function (s, i) {
+        var t = f - i;
+        var o = Math.max(0, Math.min(1, 1 - Math.abs(t) * 1.7));
+        s.style.opacity = o;
+        s.style.visibility = o > 0.001 ? 'visible' : 'hidden';
+        s.style.setProperty('--t', t.toFixed(3));
+        s.classList.toggle('is-on', o > 0.5);
+      });
+      if (rail) rail.style.transform = 'scaleY(' + p + ')';
+      if (bar) bar.style.transform = 'scaleX(' + p + ')';
+      story.classList.toggle('is-past', r.bottom < window.innerHeight * 0.6);
+      document.documentElement.classList.toggle('yh-solid-header', f > 0.4 || r.bottom < 0);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+
+    story.querySelectorAll('[data-yh-piece] img').forEach(function (shown) {
+      var probe = new Image();
+      probe.crossOrigin = 'anonymous';
+      probe.onload = function () {
+        try {
+          var n = 24, c = document.createElement('canvas');
+          c.width = c.height = n;
+          var g = c.getContext('2d');
+          g.drawImage(probe, 0, 0, n, n);
+          var d = g.getImageData(0, 0, n, n).data;
+          var corners = [0, (n - 1) * 4, (n * (n - 1)) * 4, (n * n - 1) * 4];
+          var clear = corners.filter(function (i) { return d[i + 3] < 20; }).length;
+          if (clear >= 3) shown.closest('.yh-scene').classList.add('is-cutout');
+        } catch (e) { /* keep framed mode */ }
+      };
+      probe.src = shown.currentSrc || shown.src;
+    });
+
+    var cv = story.querySelector('[data-yh-particles]');
+    if (cv) initParticles(cv, state);
+  }
+
+  function initParticles(cv, state) {
+    var cx = cv.getContext('2d');
+    var W, H, DPR, floorY, pts = [], start = performance.now();
+
+    function silhouette(w, h) {
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      var g = c.getContext('2d');
+      g.fillStyle = g.strokeStyle = '#fff';
+      g.lineCap = g.lineJoin = 'round';
+      var FH = Math.min(h * 0.58, w * 1.1), top = floorY - FH, X = w / 2, u = FH / 8;
+      g.beginPath(); g.ellipse(X, top + u * 0.55, u * 0.46, u * 0.58, 0, 0, 7); g.fill();
+      g.fillRect(X - u * 0.21, top + u * 0.95, u * 0.42, u * 0.55);
+      g.beginPath();
+      g.moveTo(X - u * 1.02, top + u * 1.5);
+      g.quadraticCurveTo(X, top + u * 1.28, X + u * 1.02, top + u * 1.5);
+      g.quadraticCurveTo(X + u * 0.98, top + u * 2.4, X + u * 0.74, top + u * 3.1);
+      g.lineTo(X + u * 0.64, top + u * 4.15); g.lineTo(X - u * 0.64, top + u * 4.15);
+      g.lineTo(X - u * 0.74, top + u * 3.1);
+      g.quadraticCurveTo(X - u * 0.98, top + u * 2.4, X - u * 1.02, top + u * 1.5);
+      g.fill();
+      [-1, 1].forEach(function (s) {
+        g.lineWidth = u * 0.5; g.beginPath(); g.moveTo(X + s * u * 0.98, top + u * 1.65); g.lineTo(X + s * u * 1.12, top + u * 2.95); g.lineTo(X + s * u * 1.08, top + u * 4.15); g.stroke();
+        g.lineWidth = u * 0.26; g.beginPath(); g.moveTo(X + s * u * 1.08, top + u * 4.1); g.lineTo(X + s * u * 1.05, top + u * 4.62); g.stroke();
+        g.lineWidth = u * 0.68; g.beginPath(); g.moveTo(X + s * u * 0.34, top + u * 4.05); g.lineTo(X + s * u * 0.38, top + u * 5.9); g.stroke();
+        g.lineWidth = u * 0.5; g.beginPath(); g.moveTo(X + s * u * 0.38, top + u * 5.9); g.lineTo(X + s * u * 0.33, top + u * 7.7); g.stroke();
+        g.lineWidth = u * 0.24; g.beginPath(); g.moveTo(X + s * u * 0.33, top + u * 7.75); g.lineTo(X + s * u * 0.46, top + u * 7.92); g.stroke();
+      });
+      return g.getImageData(0, 0, w, h).data;
+    }
+
+    function seed() {
+      DPR = Math.min(2, window.devicePixelRatio || 1);
+      W = cv.width = Math.round(cv.offsetWidth * DPR);
+      H = cv.height = Math.round(cv.offsetHeight * DPR);
+      if (!W || !H) return;
+      floorY = H * 0.59;
+      var d = silhouette(W, H), step = Math.max(2, Math.round(H / 330));
+      var A = function (x, y) { return x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 10; };
+      pts = [];
+      var cap = window.innerWidth < 700 ? 3400 : 5200;
+      for (var y = 0; y < H; y += step) {
+        for (var x = 0; x < W; x += step) {
+          if (!A(x, y)) continue;
+          var e = !A(x - step * 2, y) || !A(x + step * 2, y) || !A(x, y - step * 2) || !A(x, y + step * 2);
+          if (Math.random() > (e ? 0.95 : 0.38)) continue;
+          var a = Math.random() * 6.283;
+          pts.push({ x: x + (Math.random() - 0.5) * step, y: y + (Math.random() - 0.5) * step, b: e ? 1 : 0.42 + Math.random() * 0.3, s: (Math.random() * 1.4 + 0.8) * DPR, ph: Math.random() * 6.28, sp: 0.6 + Math.random() * 1.8, dx: Math.cos(a) * (0.4 + Math.random()), dy: Math.sin(a) * (0.4 + Math.random()) - 0.6 });
+        }
+      }
+      if (pts.length > cap) { pts.sort(function () { return Math.random() - 0.5; }); pts.length = cap; }
+      for (var i = 0; i < 160; i++) pts.push({ x: Math.random() * W, y: Math.random() * floorY, b: 0.25, s: DPR * 0.8, ph: Math.random() * 6.28, sp: 0.4, dx: 0, dy: -0.2, dust: 1 });
+    }
+
+    function draw(now) {
+      requestAnimationFrame(draw);
+      var vis = Math.max(0, 1 - Math.abs(state.f) * 1.7);
+      if (vis <= 0.001 || !W) return;
+      var tm = (now - start) / 1000;
+      var dis = Math.pow(Math.min(1, Math.max(0, state.f)), 1.2);
+      var spread = Math.min(W, H) * 0.55 * dis;
+      cx.clearRect(0, 0, W, H);
+      var gl = cx.createRadialGradient(W / 2, floorY - H * 0.29, 0, W / 2, floorY - H * 0.29, H * 0.36);
+      gl.addColorStop(0, 'rgba(236,226,206,' + (0.10 * (1 - dis)) + ')');
+      gl.addColorStop(1, 'rgba(236,226,206,0)');
+      cx.fillStyle = gl; cx.fillRect(0, 0, W, H);
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i], x = p.x, y = p.y;
+        if (p.dust) {
+          y = (p.y - tm * 12 * DPR) % floorY; if (y < 0) y += floorY;
+          x += Math.sin(tm * 0.3 + p.ph) * 8 * DPR;
+        } else {
+          x += p.dx * spread + Math.sin(tm * 0.7 + p.ph) * 0.8 * DPR;
+          y += p.dy * spread + Math.cos(tm * 0.6 + p.ph) * 0.8 * DPR;
+        }
+        var a = p.b * (0.55 + 0.45 * Math.sin(tm * p.sp + p.ph)) * (1 - dis * 0.85);
+        if (a < 0.02) continue;
+        cx.fillStyle = 'rgba(238,231,218,' + a + ')';
+        cx.fillRect(x, y, p.s, p.s);
+        if (!p.dust && y < floorY) {
+          var ry = floorY + (floorY - y) * 0.55;
+          if (ry < H) { cx.fillStyle = 'rgba(238,231,218,' + (a * 0.13) + ')'; cx.fillRect(x, ry, p.s, p.s * 1.6); }
+        }
+      }
+    }
+
+    seed();
+    window.addEventListener('resize', seed);
+    requestAnimationFrame(draw);
+  }
+
+  function boot() {
+    document.querySelectorAll('[data-yh-story]').forEach(function (s) {
+      if (!s.dataset.yhReady) { s.dataset.yhReady = '1'; initStory(s); }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  document.addEventListener('shopify:section:load', boot);
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Cinematic scroll story",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "header", "content": "Opening scene" },
+    { "type": "text", "id": "eyebrow", "label": "Small label", "default": "YAHIVO · Bespoke Streetwear · UAE" },
+    { "type": "text", "id": "title_1", "label": "Title line 1", "default": "The Anatomy" },
+    { "type": "text", "id": "title_2", "label": "Title line 2 (gold italic)", "default": "of Style" },
+    { "type": "text", "id": "hint", "label": "Scroll hint", "default": "Scroll" }
+  ],
+  "blocks": [
+    {
+      "type": "chapter",
+      "name": "Chapter",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "image_picker", "id": "scene_image", "label": "Cinematic scene photo (optional)", "info": "A dark, full-screen photo makes this look exactly like the reference. Leave empty to float the product photo on the stage." },
+        { "type": "text", "id": "label", "label": "Small label", "default": "The Signature" },
+        { "type": "text", "id": "title_1", "label": "Title line 1", "info": "Leave empty to use the product name." },
+        { "type": "text", "id": "title_2", "label": "Title line 2" },
+        { "type": "textarea", "id": "text", "label": "Short text", "info": "Leave empty to use the product description." },
+        { "type": "text", "id": "spec", "label": "Detail line after the price", "info": "e.g. S — 2XL · Heavyweight fleece" },
+        { "type": "text", "id": "link_text", "label": "Link text", "default": "View piece" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cinematic scroll story",
+      "blocks": [ { "type": "chapter" }, { "type": "chapter" }, { "type": "chapter" } ]
+    }
+  ]
+}
+{% endschema %}

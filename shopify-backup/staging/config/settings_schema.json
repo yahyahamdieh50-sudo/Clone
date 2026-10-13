@@ -1,0 +1,39 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "YAHIVO Luxury Bespoke",
+    "theme_version": "2.0.0",
+    "theme_author": "YAHIVO",
+    "theme_documentation_url": "https://www.yahivo.com",
+    "theme_support_url": "https://www.yahivo.com/pages/contact"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_dark_bg",
+        "label": "Dark background",
+        "default": "#0a0a0a"
+      },
+      {
+        "type": "color",
+        "id": "color_black",
+        "label": "Secondary black",
+        "default": "#131210"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold accent",
+        "default": "#c4a46a"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Body text",
+        "default": "#b9b2a6"
+      }
+    ]
+  }
+]

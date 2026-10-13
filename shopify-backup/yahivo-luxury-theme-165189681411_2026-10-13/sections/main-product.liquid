@@ -1,0 +1,283 @@
+{% stylesheet %}
+  .product-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 70px;
+    align-items: start;
+  }
+
+  .product-page__gallery { position: sticky; top: 100px; }
+
+  .product-page__main-image {
+    background: var(--color-black);
+    border: 1px solid var(--color-border);
+    margin-bottom: 14px;
+  }
+
+  .product-page__main-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .product-page__thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 10px;
+  }
+
+  .product-page__thumb {
+    border: 1px solid var(--color-border);
+    background: var(--color-black);
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.3s ease;
+  }
+
+  .product-page__thumb img { width: 100%; height: auto; display: block; }
+  .product-page__thumb:hover,
+  .product-page__thumb[aria-current="true"] { border-color: var(--color-gold); }
+
+  .product-page__vendor {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .product-page__title {
+    font-family: var(--font-serif);
+    font-size: clamp(30px, 4vw, 48px);
+    color: var(--color-white);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .product-page__price {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    color: var(--color-gold);
+    letter-spacing: 1px;
+    margin-bottom: 36px;
+  }
+
+  .product-page__price s { color: #777; font-size: 18px; margin-right: 12px; }
+
+  .product-form__label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: 10px;
+  }
+
+  .product-form select,
+  .product-form input[type="number"] {
+    width: 100%;
+    background: var(--color-black);
+    border: 1px solid var(--color-border);
+    color: var(--color-white);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 14px 16px;
+    margin-bottom: 26px;
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .product-form select:focus,
+  .product-form input:focus {
+    outline: none;
+    border-color: var(--color-gold);
+  }
+
+  .product-form__select-wrap { position: relative; }
+  .product-form__select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 18px;
+    top: 16px;
+    color: var(--color-gold);
+    pointer-events: none;
+  }
+
+  .product-form__qty { max-width: 120px; }
+
+  .product-form__submit {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid var(--color-gold);
+    background: var(--color-gold);
+    color: var(--color-black);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 0;
+  }
+
+  .product-form__submit:hover:not([disabled]) {
+    background: transparent;
+    color: var(--color-gold);
+  }
+
+  .product-form__submit[disabled] {
+    background: transparent;
+    border-color: #555;
+    color: #777;
+    cursor: not-allowed;
+  }
+
+  .product-page__description {
+    margin-top: 44px;
+    padding-top: 36px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  .product-page__description h1,
+  .product-page__description h2,
+  .product-page__description h3 { color: var(--color-white); font-size: 1.2rem; }
+
+  @media (max-width: 900px) {
+    .product-page {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: 30px 20px 70px;
+    }
+    .product-page__gallery { position: static; }
+  }
+{% endstylesheet %}
+
+<div class="product-page">
+  <div class="product-page__gallery">
+    <div class="product-page__main-image">
+      {%- if product.featured_image -%}
+        <img
+          id="MainProductImage-{{ section.id }}"
+          src="{{ product.featured_image | image_url: width: 1000 }}"
+          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          width="{{ product.featured_image.width }}"
+          height="{{ product.featured_image.height }}"
+        >
+      {%- endif -%}
+    </div>
+
+    {%- if product.images.size > 1 -%}
+      <div class="product-page__thumbs">
+        {%- for image in product.images limit: 8 -%}
+          <button
+            type="button"
+            class="product-page__thumb"
+            data-full="{{ image | image_url: width: 1000 }}"
+            {% if forloop.first %}aria-current="true"{% endif %}
+          >
+            <img src="{{ image | image_url: width: 160 }}" alt="{{ image.alt | escape }}" loading="lazy">
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="product-page__info">
+    <div class="product-page__vendor">{{ shop.name }} · {{ product.type | default: 'Streetwear' }}</div>
+    <h1 class="product-page__title">{{ product.title }}</h1>
+
+    <p class="product-page__price" id="ProductPrice-{{ section.id }}">
+      {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+        <s>{{ product.selected_or_first_available_variant.compare_at_price | money }}</s>
+      {%- endif -%}
+      {{ product.selected_or_first_available_variant.price | money }}
+    </p>
+
+    {%- form 'product', product, class: 'product-form' -%}
+      {%- if product.variants.size > 1 -%}
+        <label class="product-form__label" for="VariantSelect-{{ section.id }}">
+          {%- for option in product.options -%}{{ option }}{% unless forloop.last %} / {% endunless %}{%- endfor -%}
+        </label>
+        <div class="product-form__select-wrap">
+          <select name="id" id="VariantSelect-{{ section.id }}">
+            {%- for variant in product.variants -%}
+              <option
+                value="{{ variant.id }}"
+                {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+                data-price="{{ variant.price | money }}"
+              >
+                {{ variant.title }} — {{ variant.price | money }}{% unless variant.available %} ({{ 'products.product.sold_out' | t }}){% endunless %}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- else -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {%- endif -%}
+
+      <label class="product-form__label" for="Quantity-{{ section.id }}">{{ 'products.product.quantity' | t }}</label>
+      <input type="number" id="Quantity-{{ section.id }}" name="quantity" value="1" min="1" class="product-form__qty">
+
+      <button
+        type="submit"
+        name="add"
+        class="product-form__submit"
+        {% unless product.available %}disabled{% endunless %}
+      >
+        {%- if product.available -%}
+          {{ 'products.product.add_to_cart' | t }}
+        {%- else -%}
+          {{ 'products.product.sold_out' | t }}
+        {%- endif -%}
+      </button>
+    {%- endform -%}
+
+    {%- if product.description != blank -%}
+      <div class="product-page__description">
+        {{ product.description }}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% javascript %}
+  document.querySelectorAll('.product-page__thumb').forEach(function (thumb) {
+    thumb.addEventListener('click', function () {
+      var main = thumb.closest('.product-page__gallery').querySelector('.product-page__main-image img');
+      if (main) main.src = thumb.getAttribute('data-full');
+      thumb.closest('.product-page__thumbs').querySelectorAll('.product-page__thumb').forEach(function (t) {
+        t.removeAttribute('aria-current');
+      });
+      thumb.setAttribute('aria-current', 'true');
+    });
+  });
+
+  document.querySelectorAll('select[name="id"]').forEach(function (select) {
+    select.addEventListener('change', function () {
+      var opt = select.options[select.selectedIndex];
+      var priceEl = select.closest('.product-page__info')
+        ? select.closest('.product-page__info').querySelector('.product-page__price')
+        : null;
+      if (priceEl && opt.dataset.price) priceEl.textContent = opt.dataset.price;
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": []
+}
+{% endschema %}

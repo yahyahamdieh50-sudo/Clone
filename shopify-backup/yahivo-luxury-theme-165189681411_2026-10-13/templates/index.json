@@ -1,0 +1,128 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "story": {
+      "type": "scroll-story",
+      "blocks": {
+        "chapter_1": {
+          "type": "chapter",
+          "settings": {
+            "product": "essential-heavyweight-boxy-fleece-hoodie",
+            "label": "The Signature",
+            "title_1": "Built in",
+            "title_2": "Heavy Fleece",
+            "text": "A warm, fleece-lined boxy hoodie in a cotton-polyester blend — a heavyweight layer for cooler evenings.",
+            "spec": "S — 2XL",
+            "link_text": "View piece"
+          }
+        },
+        "chapter_2": {
+          "type": "chapter",
+          "settings": {
+            "product": "essential-heavyweight-hoodie",
+            "label": "The Heavyweight",
+            "title_1": "Weight,",
+            "title_2": "Worn Softly",
+            "text": "Relaxed-fit heavyweight cotton blend with a front pouch pocket and ribbed cuffs, made for everyday layering.",
+            "spec": "S — 2XL",
+            "link_text": "View piece"
+          }
+        },
+        "chapter_3": {
+          "type": "chapter",
+          "settings": {
+            "product": "essential-fleece-mock-neck-crew-sweatshirt",
+            "label": "The Crew",
+            "title_1": "Structure,",
+            "title_2": "Held Close",
+            "text": "An oversized long-sleeve sweatshirt with a mock neckline and fleece lining, for everyday outfits and cooler days.",
+            "spec": "S — XL",
+            "link_text": "View piece"
+          }
+        },
+        "chapter_4": {
+          "type": "chapter",
+          "settings": {
+            "product": "streetwear-unisex-fleece-hoodie",
+            "label": "The Essential",
+            "title_1": "Made",
+            "title_2": "to Be Worn",
+            "text": "Relaxed-fit fleece hoodie with a drawstring hood and ribbed cuffs, in a thick cotton-polyester blend.",
+            "spec": "S — 2XL",
+            "link_text": "View piece"
+          }
+        },
+        "chapter_5": {
+          "type": "chapter",
+          "settings": {
+            "product": "rebel-rabbit-graphic-oversized-t-shirt",
+            "label": "The Graphic",
+            "title_1": "A Language",
+            "title_2": "of Rebellion",
+            "text": "A loose-fit, 100% cotton graphic tee — worn alone, or layered under a hoodie.",
+            "spec": "S — 3XL",
+            "link_text": "View piece"
+          }
+        },
+        "chapter_6": {
+          "type": "chapter",
+          "settings": {
+            "product": "essential-cotton-t-shirt",
+            "label": "The Foundation",
+            "title_1": "A Shirt of",
+            "title_2": "Pure Cotton",
+            "text": "A loose-fitting 100% cotton short-sleeve tee for relaxed everyday wear.",
+            "spec": "S — 3XL",
+            "link_text": "View piece"
+          }
+        }
+      },
+      "block_order": [
+        "chapter_1",
+        "chapter_2",
+        "chapter_3",
+        "chapter_4",
+        "chapter_5",
+        "chapter_6"
+      ],
+      "settings": {
+        "eyebrow": "YAHIVO · Bespoke Streetwear · UAE",
+        "title_1": "The Anatomy",
+        "title_2": "of Style",
+        "hint": "Scroll"
+      }
+    },
+    "outro": {
+      "type": "house-outro",
+      "settings": {
+        "label": "The House of YAHIVO",
+        "title_1": "Streetwear",
+        "title_2": "for the few.",
+        "text": "Every YAHIVO piece is cut heavy and finished clean. Chosen for the street, delivered across the UAE.",
+        "button_text": "Shop the collection"
+      }
+    },
+    "wardrobe": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "hoodies",
+        "label": "The Wardrobe",
+        "title": "Hoodies & Essentials",
+        "products_to_show": 8
+      }
+    }
+  },
+  "order": [
+    "story",
+    "outro",
+    "wardrobe"
+  ]
+}

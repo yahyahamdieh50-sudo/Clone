@@ -1,0 +1,111 @@
+{% stylesheet %}
+  .yh-hdr {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: calc(env(safe-area-inset-top, 0px) + 18px) clamp(16px, 4vw, 40px) 18px;
+    transition: background .4s, border-color .4s;
+    border-bottom: 1px solid transparent;
+  }
+  html.yh-solid-header .yh-hdr,
+  .yh-hdr--solid { background: rgba(10,10,10,.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom-color: rgba(236,230,218,.08); }
+  .yh-hdr__mark { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .42em; text-transform: uppercase; color: var(--color-ink); white-space: nowrap; }
+  .yh-hdr__mark svg { width: 16px; height: 16px; flex: none; }
+  .yh-hdr__mark:hover { color: var(--color-gold); opacity: 1; }
+  .yh-hdr__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px; }
+  .yh-hdr__nav a { font-family: var(--font-mono); font-size: 10px; letter-spacing: .32em; text-transform: uppercase; color: var(--color-muted); }
+  .yh-hdr__nav a:hover, .yh-hdr__nav a[aria-current="page"] { color: var(--color-ink); opacity: 1; }
+  .yh-hdr__right { display: flex; align-items: center; gap: 18px; }
+  .yh-hdr__cart { font-family: var(--font-mono); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--color-muted); white-space: nowrap; }
+  .yh-hdr__cart b { color: var(--color-gold); font-weight: 400; }
+  .yh-hdr__btn {
+    display: inline-block; border: 1px solid rgba(236,230,218,.55); padding: 10px 16px; white-space: nowrap;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .32em; text-transform: uppercase; color: var(--color-ink);
+    background: rgba(10,10,10,.25); transition: .35s;
+  }
+  .yh-hdr__btn:hover { background: var(--color-ink); color: #0a0a0a; opacity: 1; }
+  .yh-hdr-spacer { height: 70px; }
+  .yh-hdr__menu { display: none; position: relative; }
+  .yh-hdr__menu summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; color: var(--color-ink); }
+  .yh-hdr__menu summary::-webkit-details-marker { display: none; }
+  .yh-hdr__menu summary svg { width: 22px; height: 22px; }
+  .yh-hdr__menu .yh-hdr__icon-close { display: none; }
+  .yh-hdr__menu[open] .yh-hdr__icon-open { display: none; }
+  .yh-hdr__menu[open] .yh-hdr__icon-close { display: block; }
+  .yh-hdr__drawer {
+    position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 76px); bottom: 0;
+    background: rgba(10,10,10,.97); padding: 28px clamp(16px, 4vw, 40px);
+    display: flex; flex-direction: column; overflow-y: auto; border-top: 1px solid rgba(236,230,218,.08);
+  }
+  .yh-hdr__drawer a { font-family: var(--font-mono); font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: var(--color-ink); padding: 16px 0; border-bottom: 1px solid rgba(236,230,218,.08); }
+  .yh-hdr__drawer a[aria-current="page"] { color: var(--color-gold); }
+  @media (max-width: 900px) {
+    .yh-hdr__nav { display: none; }
+    .yh-hdr__menu { display: block; }
+    .yh-hdr { padding-top: calc(env(safe-area-inset-top, 0px) + 14px); padding-bottom: 14px; }
+  }
+  @media (max-width: 480px) { .yh-hdr__btn { display: none; } }
+  @media (max-width: 420px) { .yh-hdr__mark span { display: none; } }
+{% endstylesheet %}
+
+{%- liquid
+  assign is_home = false
+  if request.page_type == 'index'
+    assign is_home = true
+  endif
+  assign menu = linklists[section.settings.menu]
+-%}
+
+<header class="yh-hdr{% unless is_home %} yh-hdr--solid{% endunless %}">
+  <details class="yh-hdr__menu">
+    <summary aria-label="Menu">
+      <svg class="yh-hdr__icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+      <svg class="yh-hdr__icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </summary>
+    <nav class="yh-hdr__drawer" aria-label="Mobile">
+      {%- if menu != blank and menu.links.size > 0 -%}
+        {%- for link in menu.links -%}
+          <a href="{{ link.url }}" {% if link.active %}aria-current="page"{% endif %}>{{ link.title }}</a>
+        {%- endfor -%}
+      {%- else -%}
+        <a href="{{ routes.all_products_collection_url }}">Shop</a>
+        <a href="{{ routes.collections_url }}">Collections</a>
+      {%- endif -%}
+      <a href="{{ routes.search_url }}">Search</a>
+      <a href="{{ routes.account_url }}">Account</a>
+    </nav>
+  </details>
+
+  <a class="yh-hdr__mark" href="{{ routes.root_url }}">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M3 4l7 8 7-8M10 12v5"/></svg>
+    <span>{{ shop.name }}</span>
+  </a>
+
+  <nav class="yh-hdr__nav" aria-label="Main">
+    {%- if menu != blank and menu.links.size > 0 -%}
+      {%- for link in menu.links -%}
+        <a href="{{ link.url }}" {% if link.active %}aria-current="page"{% endif %}>{{ link.title }}</a>
+      {%- endfor -%}
+    {%- else -%}
+      <a href="{{ routes.all_products_collection_url }}">Shop</a>
+      <a href="{{ routes.collections_url }}">Collections</a>
+      <a href="{{ routes.search_url }}">Search</a>
+    {%- endif -%}
+  </nav>
+
+  <div class="yh-hdr__right">
+    <a class="yh-hdr__cart" href="{{ routes.cart_url }}">Cart <b>{{ cart.item_count }}</b></a>
+    <a class="yh-hdr__btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_text }}</a>
+  </div>
+</header>
+{%- unless is_home -%}<div class="yh-hdr-spacer"></div>{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu (desktop)", "default": "main-menu" },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Shop now" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ]
+}
+{% endschema %}

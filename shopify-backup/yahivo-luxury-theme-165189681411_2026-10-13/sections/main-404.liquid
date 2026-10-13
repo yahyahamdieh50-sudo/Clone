@@ -1,0 +1,60 @@
+{% stylesheet %}
+  .page-404 {
+    text-align: center;
+    padding: 140px 20px 160px;
+  }
+
+  .page-404__code {
+    font-family: var(--font-serif);
+    font-size: 120px;
+    color: var(--color-gold);
+    opacity: 0.4;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .page-404__title {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--color-white);
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .page-404__text {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--color-text);
+    margin-bottom: 44px;
+  }
+
+  .page-404__link {
+    display: inline-block;
+    padding: 16px 44px;
+    border: 2px solid var(--color-gold);
+    color: var(--color-gold);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+
+  .page-404__link:hover { background: var(--color-gold); color: var(--color-black); opacity: 1; }
+{% endstylesheet %}
+
+<div class="page-404">
+  <div class="page-404__code">404</div>
+  <h1 class="page-404__title">{{ 'general.404.title' | t }}</h1>
+  <p class="page-404__text">{{ 'general.404.subtext' | t }}</p>
+  <a href="{{ routes.all_products_collection_url }}" class="page-404__link">{{ 'general.404.link' | t }}</a>
+</div>
+
+{% schema %}
+{
+  "name": "404 page",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,67 @@
+{% stylesheet %}
+  .article-page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  .article-page__date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .article-page__title {
+    font-family: var(--font-serif);
+    font-size: clamp(30px, 5vw, 46px);
+    color: var(--color-white);
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .article-page__image img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 40px;
+    border: 1px solid var(--color-border);
+  }
+
+  .article-page__content {
+    color: var(--color-text);
+    line-height: 1.9;
+    font-size: 16px;
+  }
+
+  .article-page__content h2,
+  .article-page__content h3 { color: var(--color-white); margin-top: 2rem; }
+  .article-page__content a { color: var(--color-gold); }
+
+  @media (max-width: 768px) {
+    .article-page { padding: 36px 20px 70px; }
+  }
+{% endstylesheet %}
+
+<article class="article-page">
+  <div class="article-page__date">{{ article.published_at | date: "%B %d, %Y" }}</div>
+  <h1 class="article-page__title">{{ article.title }}</h1>
+  {%- if article.image -%}
+    <div class="article-page__image">
+      <img src="{{ article.image | image_url: width: 1200 }}" alt="{{ article.image.alt | escape }}" width="{{ article.image.width }}" height="{{ article.image.height }}">
+    </div>
+  {%- endif -%}
+  <div class="article-page__content">
+    {{ article.content }}
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": []
+}
+{% endschema %}

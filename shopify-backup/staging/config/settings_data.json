@@ -1,0 +1,40 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "color_dark_bg": "#0a0a0a",
+    "color_black": "#131210",
+    "color_gold": "#c4a46a",
+    "color_text": "#c4a46a",
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "menu": "main-menu",
+          "button_text": "Shop now",
+          "button_link": ""
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "col1_title": "Shop",
+          "col1_menu": "",
+          "col2_title": "Care",
+          "col2_menu": "footer",
+          "col3_title": "Visit",
+          "col3_text": "yahivo.com\nDelivered across the UAE",
+          "fine_print": "Made heavy, worn daily."
+        }
+      }
+    },
+    "content_for_index": []
+  }
+}

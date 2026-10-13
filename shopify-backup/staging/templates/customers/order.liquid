@@ -1,0 +1,29 @@
+<div class="account-page account-page--wide">
+  <h1 class="account-page__title">Order {{ order.name }}</h1>
+  <p class="account-page__meta">
+    {{ order.created_at | date: "%B %d, %Y" }} · {{ order.financial_status_label }} · {{ order.fulfillment_status_label }}
+  </p>
+
+  <table class="account-table">
+    <thead>
+      <tr><th>Product</th><th>Qty</th><th>Price</th></tr>
+    </thead>
+    <tbody>
+      {%- for line_item in order.line_items -%}
+        <tr>
+          <td>{{ line_item.title }}</td>
+          <td>{{ line_item.quantity }}</td>
+          <td>{{ line_item.final_line_price | money }}</td>
+        </tr>
+      {%- endfor -%}
+    </tbody>
+  </table>
+
+  <p class="account-page__meta" style="margin-top: 24px;">
+    Subtotal: {{ order.line_items_subtotal_price | money }}<br>
+    Shipping: {{ order.shipping_price | money }}<br>
+    <strong style="color: var(--color-gold);">Total: {{ order.total_price | money }}</strong>
+  </p>
+
+  <p><a href="{{ routes.account_url }}">&larr; Back to account</a></p>
+</div>

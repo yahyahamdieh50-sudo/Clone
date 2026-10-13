@@ -1,0 +1,75 @@
+{% stylesheet %}
+  .yh-contact { max-width: 720px; margin: 0 auto; padding: 60px 40px 100px; }
+  .yh-contact__title { font-family: var(--font-serif); font-size: clamp(32px, 5vw, 48px); color: var(--color-white); font-weight: 400; text-align: center; margin-bottom: 18px; }
+  .yh-contact__intro { color: var(--color-text); line-height: 1.8; text-align: center; margin: 0 auto 40px; max-width: 560px; }
+  .yh-contact__intro a { color: var(--color-gold); }
+  .yh-contact__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+  .yh-contact__field { display: flex; flex-direction: column; margin-bottom: 18px; }
+  .yh-contact__field--full { grid-column: 1 / -1; }
+  .yh-contact label { font-family: var(--font-mono); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 8px; }
+  .yh-contact input, .yh-contact textarea {
+    width: 100%; background: var(--color-black); border: 1px solid var(--color-border); color: var(--color-white);
+    font-family: var(--font-sans); font-size: 16px; padding: 14px 16px; border-radius: 0;
+  }
+  .yh-contact textarea { min-height: 160px; resize: vertical; }
+  .yh-contact input:focus, .yh-contact textarea:focus { outline: none; border-color: var(--color-gold); }
+  .yh-contact__submit {
+    width: 100%; padding: 18px; border: 2px solid var(--color-gold); background: var(--color-gold); color: var(--color-black);
+    font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; cursor: pointer; border-radius: 0;
+  }
+  .yh-contact__submit:hover { background: transparent; color: var(--color-gold); }
+  .yh-contact__note { padding: 14px 16px; margin-bottom: 24px; border: 1px solid var(--color-gold); color: var(--color-ink); }
+  .yh-contact__note--error { border-color: #c0544a; }
+  @media (max-width: 600px) {
+    .yh-contact { padding: 36px 20px 70px; }
+    .yh-contact__grid { grid-template-columns: 1fr; }
+  }
+{% endstylesheet %}
+
+<div class="yh-contact">
+  <h1 class="yh-contact__title">{{ page.title }}</h1>
+  {%- if page.content != blank -%}
+    <div class="yh-contact__intro">{{ page.content }}</div>
+  {%- elsif section.settings.intro != blank -%}
+    <div class="yh-contact__intro">{{ section.settings.intro }}</div>
+  {%- endif -%}
+
+  {%- form 'contact', id: 'ContactForm' -%}
+    {%- if form.posted_successfully? -%}
+      <p class="yh-contact__note" role="status">{{ section.settings.success_text }}</p>
+    {%- elsif form.errors -%}
+      <div class="yh-contact__note yh-contact__note--error" role="alert">{{ form.errors | default_errors }}</div>
+    {%- endif -%}
+
+    <div class="yh-contact__grid">
+      <div class="yh-contact__field">
+        <label for="ContactForm-name">Name</label>
+        <input type="text" id="ContactForm-name" name="contact[name]" autocomplete="name" value="{{ form.name }}">
+      </div>
+      <div class="yh-contact__field">
+        <label for="ContactForm-email">Email *</label>
+        <input type="email" id="ContactForm-email" name="contact[email]" autocomplete="email" required value="{{ form.email }}">
+      </div>
+      <div class="yh-contact__field yh-contact__field--full">
+        <label for="ContactForm-phone">Phone</label>
+        <input type="tel" id="ContactForm-phone" name="contact[phone]" autocomplete="tel" value="{{ form.phone }}">
+      </div>
+      <div class="yh-contact__field yh-contact__field--full">
+        <label for="ContactForm-body">Message *</label>
+        <textarea id="ContactForm-body" name="contact[body]" required>{{ form.body }}</textarea>
+      </div>
+    </div>
+    <button type="submit" class="yh-contact__submit">{{ section.settings.button_text }}</button>
+  {%- endform -%}
+</div>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "settings": [
+    { "type": "richtext", "id": "intro", "label": "Intro (used when the page has no content)", "default": "<p>Questions about sizing, an order or a delivery? Send us a message and the YAHIVO team will reply within one business day.</p>" },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Send message" },
+    { "type": "text", "id": "success_text", "label": "Success message", "default": "Message received. We will get back to you within one business day." }
+  ]
+}
+{% endschema %}
